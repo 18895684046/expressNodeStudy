@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>首页</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<style>
+  #tab {
+    width: 400px;
+    margin-top: 30px;
+  }
+</style>
+
+<body>
+  账号： <input id="username" type="text" name="username"><br><br>
+  密码： <input id="password" type="password" name="paswword"><br><br>
+  年龄： <input id="age" type="number" name="age"><br><br>
+  <button id="addBtn">添加人员</button>
+  <button id="updateBtn">更新人员</button>
+  <button id="deleBtn">删除人员</button>
+  <button id="logout">退出登录</button>
+  <table id="tab" border="1">
+    <thead>
+      <th>姓名</th>
+      <th>年龄</th>
+    </thead>
+    <tbody id="tbody"></tbody>
+  </table>
+  
+  <form action="/api/users" method="post" enctype="multipart/form-data">
+    账号： <input type="text" name="username"><br><br>
+    密码： <input type="password" name="password"><br><br>
+    年龄： <input type="number" name="age"><br><br>
+    文件： <input type="file" name="avatar" id="">
+    <input type="submit" value="添加++">
+    <button type="submit">添加--</button>
+  </form>
+</body>
+<script>
+
+  const username = document.querySelector('#username')
+  const password = document.querySelector('#password')
+  const age = document.querySelector('#age')
+  const addBtn = document.querySelector('#addBtn')
+  const updateBtn = document.querySelector('#updateBtn')
+  const deleBtn = document.querySelector('#deleBtn')
+  const tbody = document.querySelector('#tbody')
+  const logout = document.querySelector('#logout')
+
+
+  // 添加人员
+  addBtn.onclick = () => {
+    console.log(username.value, password.value, age.value);
+    fetch('/api/users', {
+      method: "post",
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+        age: age.value
+      }),
+      headers: {
+        "Content-type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, '最终得到的结果');
+      })
+  }
+
+  // 更新人员
+  updateBtn.onclick = () => {
+    fetch('/api/users/62b7aaa31e23c921f57e7555', {
+      method: "put",
+      headers: {
+        "Content-type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, '最终得到的结果');
+      })
+  }
+
+  // 删除人员
+  deleBtn.onclick = () => {
+    fetch('/api/users/62b7aa1ca4bf5c12a63ed376', {
+      method: "delete",
+      headers: {
+        "Content-type": "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        console.log(res, '最终得到的结果');
+      })
+  }
+
+  // 获取人员
+  fetch('/api/users', {
+    method: 'get'
+  }).then(res => res.json())
+    .then(res => {
+      console.log(res, '全部信息');
+      const mapHtml = res.map((item) => `
+          <tr>
+            <th>${item.username}</th>
+            <th>${item.age}</th>
+            </tr>`).join('')
+      tbody.innerHTML = mapHtml
+    })
+
+  logout.onclick = () => {
+    fetch('/api/logout', {
+      method: "post",
+      headers: {
+        "Content-type": "application/json"
+      }
+    }).then(res => res.json())
+      .then(res => {
+        if (res.success) {
+          location.href = '/login'
+        }
+      })
+  }
+
+  // let aa = 'Bearer null'
+  // console.log(aa.split(' ')[1],'dd');
+  // let cc = aa.split(' ')[1]
+  // if(cc){
+  //   console.log('22');
+  // }
+
+
+
+</script>
+
+</html>
